@@ -1,3 +1,4 @@
+import moment from "moment";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useForm } from "react-hook-form";
@@ -66,12 +67,18 @@ const Carts = () => {
     const paymentData = {
       customer: currentUser?.data?._id,
       items: jobsArray.map((job) => ({ job: job._id })),
+      hiringDateTime: data.hiringDateTime,
       shippingAddress: data.shippingAddress,
       billingAddress: data.billingAddress,
       paymentMethod: data.paymentMethod,
       totalAmount: finalAmount,
       serviceCharge: serviceCharge,
       isPaid: true,
+
+      // optional field for sending email both customer and worker
+      customerEmail: currentUser.data.email,
+      workerEmail: jobsArray[0].worker.email,
+      serviceName: jobsArray[0].title,
     };
 
     // send data to the server
@@ -149,10 +156,11 @@ const Carts = () => {
                   Total Worker: <b>{jobsArray.length}</b>
                 </h1>
                 <h1 className="text-md">
-                  Amount: <b>{totalWages ? totalWages : 0 }$</b>
+                  Amount: <b>{totalWages ? totalWages : 0}$</b>
                 </h1>
                 <h1 className="text-md text-red-600">
-                  Service Charge (5%): <b>{serviceCharge ? serviceCharge : 0}$</b>
+                  Service Charge (5%):{" "}
+                  <b>{serviceCharge ? serviceCharge : 0}$</b>
                 </h1>
                 <hr className="my-2" />
                 <h1 className="text-lg font-bold">
@@ -160,6 +168,25 @@ const Carts = () => {
                 </h1>
               </div>
               <form onSubmit={handleSubmit(onSubmit)} className="mt-6">
+                <div className="my-4">
+                  <label
+                    htmlFor="hiringDateTime"
+                    className="block text-sm text-gray-800 "
+                  >
+                    Worker Hiring Date & Time
+                  </label>
+                  <input
+                    type="datetime-local"
+                    className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-lg focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
+                    {...register("hiringDateTime", { required: true })}
+                  />
+                </div>
+                {errors.hiringDateTime && (
+                  <span className="label-text-alt text-red-500 mt-2">
+                    Worker Hiring Date & Time is required
+                  </span>
+                )}
+
                 <div>
                   <label
                     htmlFor="shippingAddress"
@@ -249,6 +276,7 @@ const Carts = () => {
                     <div>
                       <p>Transaction Id:</p>
                       <p>Customer Id:</p>
+                      <p>Hiring Date & Time:</p>
                       <p>Shipping Address:</p>
                       <p>Billing Address:</p>
                       <p>Payment Method:</p>
@@ -256,13 +284,34 @@ const Carts = () => {
                       <p>Service Charge:</p>
                     </div>
                     <div>
-                      <p><b>{paymentSuccessData._id}</b></p>
-                      <p><b>{paymentSuccessData.customer}</b></p>
-                      <p><b>{paymentSuccessData.shippingAddress}</b></p>
-                      <p><b>{paymentSuccessData.billingAddress}</b></p>
-                      <p><b>{paymentSuccessData.paymentMethod}</b></p>
-                      <p><b>{paymentSuccessData.totalAmount}$</b></p>
-                      <p><b>{paymentSuccessData.serviceCharge}$</b></p>
+                      <p>
+                        <b>{paymentSuccessData._id}</b>
+                      </p>
+                      <p>
+                        <b>{paymentSuccessData.customer}</b>
+                      </p>
+                      <p>
+                        <b>
+                          {moment(paymentSuccessData.hiringDateTime).format(
+                            "YYYY-MM-DD HH:mm a"
+                          )}
+                        </b>
+                      </p>
+                      <p>
+                        <b>{paymentSuccessData.shippingAddress}</b>
+                      </p>
+                      <p>
+                        <b>{paymentSuccessData.billingAddress}</b>
+                      </p>
+                      <p>
+                        <b>{paymentSuccessData.paymentMethod}</b>
+                      </p>
+                      <p>
+                        <b>{paymentSuccessData.totalAmount}$</b>
+                      </p>
+                      <p>
+                        <b>{paymentSuccessData.serviceCharge}$</b>
+                      </p>
                     </div>
                   </div>
                   <div className="modal-action">

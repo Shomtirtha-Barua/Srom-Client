@@ -36,6 +36,7 @@ const Orders = () => {
               <th>Payment Status</th>
               <th>Payment Method</th>
               <th>Ordered Time</th>
+              <th>Hiring Date & Time</th>
             </tr>
           </thead>
           <tbody>
@@ -66,6 +67,9 @@ const Orders = () => {
                 </td>
 
                 <td>{moment(order?.createdAt).format("YYYY-MM-DD HH:mm a")}</td>
+                <td>
+                  {moment(order?.hiringDateTime).format("YYYY-MM-DD HH:mm a")}
+                </td>
               </tr>
             ))}
           </tbody>

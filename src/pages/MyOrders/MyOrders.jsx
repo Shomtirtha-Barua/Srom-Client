@@ -35,6 +35,7 @@ const MyOrders = () => {
               <thead>
                 <tr className="bg-sky-200 text-black">
                   <th>Transaction Id</th>
+                  <th>Hiring Date & Time</th>
                   <th>Shipping Address</th>
                   <th>Billing Address</th>
                   <th>Total Amount</th>
@@ -48,6 +49,12 @@ const MyOrders = () => {
                 {orders?.data?.map((order) => (
                   <tr className="hover:bg-sky-50" key={order?._id}>
                     <td>{order?._id}</td>
+                    <td>
+                      {" "}
+                      {moment(order?.hiringDateTime).format(
+                        "YYYY-MM-DD HH:mm a"
+                      )}
+                    </td>
                     <td>{order?.shippingAddress}</td>
                     <td>{order?.billingAddress}</td>
                     <td>{order?.totalAmount}$</td>
